@@ -1,0 +1,34 @@
+* {
+    margin: 0;
+    padding: 0;
+}
+
+.box {
+    width: 50px;
+    height: 50px;
+    position: relative;
+    font-weight: bold;
+    text-align:center;
+    align-content: center;
+}
+
+.box span {
+    position: relative;
+}
+
+#boxA {
+    background-color: red;
+    position: absolute;
+}
+
+#boxB {
+    background-color: green;
+    position: absolute;
+    right: 0;
+}
+
+#boxC {
+    background-color: blue;
+    position: absolute;
+    left: 50px;
+}

@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<!--
+
+                  *********
+                ***********
+                ***       ***
+                **  STOP!  **
+                ***       ***
+                ***********
+                  *********
+
+
+  You're not looking in the correct place.
+
+  The work for this assignment is in **behavior.js**, NOT this file.
+
+  There is nothing useful you can find in this HTML file.
+
+-->
+<html>
+  <head>
+    <title>Chat Bot</title>
+    <style>
+      body { margin: 0; font-family: sans-serif; }
+    </style>
+    <script src="behavior.js"></script>
+    <script>
+      // Avert your eyes.
+
+(() => {
+  let applyProp = (e, type, k, v) => {
+    let s = e.style;
+    if (v === undefined || v === null) return;
+    switch (k) {
+      default:
+        s[k] = v;
+        break;
+    }
+  };
+  let applyProps = (e, type, value) => {
+    switch (typeof value) {
+      case 'number':
+      case 'string':
+      case 'boolean':
+        e.append(value + '');
+        break;
+      case 'object':
+        if (Array.isArray(value)) {
+          for (let i = 0; i < value.length; i++) {
+            applyProps(e, type, value[i]);
+          }
+        } else if (value instanceof HTMLElement) {
+          e.append(value);
+        } else {
+          for (let k of Object.keys(value)) {
+            applyProp(e, type, k, value[k]);
+          }
+        }
+        break;
+      default:
+        throw new Error();
+    }
+    return e;
+  };
+  let factory = (type) => {
+    return function() {
+      let e = document.createElement(type);
+      e.set = function() {
+        applyProps(e, type, Array.from(arguments));
+        return e;
+      }
+      e.style.boxSizing = 'border-box';
+      e.set(Array.from(arguments));
+      return e;
+    };
+  };
+
+  let now = () => new Date().getTime() / 1000;
+  let getFutureTime = () => now() + Math.random() * 1.5 + 0.6;
+
+  let state = 'UNKNOWN';
+  let queuedData = null;
+  let processingDelayLimit = 0;
+  let activeTopic = null;
+  let fast = true;
+
+  let userMsg = null;
+
+  let queueMessage = (msg, nextState) => {
+    state = 'QUEUED';
+    queuedData = { msg: JSON.parse(JSON.stringify(msg)), state: nextState };
+    processingDelayLimit = fast ? 0 : getFutureTime();
+    fast = false;
+  };
+
+  let refresh = () => {
+
+    switch (state) {
+      case 'QUEUED':
+        if (processingDelayLimit > now()) return;
+        injectMessage(false, queuedData.msg);
+        state = queuedData.state;
+        queuedData = null;
+        break;
+
+      case 'WANT_TOPIC':
+        queueMessage("What would you like to talk about?", 'RECV_TOPIC');
+        break;
+
+      case 'RECV_TOPIC':
+        if (userMsg) {
+          activeTopic = userMsg;
+          let items = userRequestsInformationAboutTopic(activeTopic);
+
+          if (typeof items === 'string' && items.startsWith('*')) {
+            queueMessage(items.substring(1), 'WANT_TOPIC');
+            userMsg = null;
+          } else {
+            userMsg = null;
+            if (!Array.isArray(items)) items = [items];
+            items = items.map(v => {
+              if (v === undefined) return 'undefined';
+              if (v === null) return 'null';
+              if (v === "") return '""';
+              if (typeof v === 'string') return v;
+              return JSON.stringify(v);
+            });
+            queueMessage(["This is what I know about " + activeTopic.trim() + ":", "", ...items], 'WANT_INFO');
+          }
+        }
+        break;
+
+      case 'WANT_INFO':
+        queueMessage("Do you know anything about " + activeTopic + "?", 'RECV_INFO');
+        break;
+
+      case 'RECV_INFO':
+        if (userMsg) {
+          switch (userMsg.split('.')[0].split('!')[0].trim().toLowerCase()) {
+            case "yes":
+            case "yeah":
+            case "indeed":
+              userMsg = null;
+              queueMessage("Great! Tell me what you know about " + activeTopic + ".", 'RECV_INFO');
+              break;
+
+            default:
+              let skipContribution = userHasProvidedInformationAboutTopic(activeTopic, userMsg);
+              userMsg = null;
+              queueMessage(skipContribution === true ? 'Oh well' : 'Neat! I will remember this.', 'WANT_TOPIC');
+              break;
+          }
+        }
+        break;
+    }
+  };
+  setInterval(() => refresh(), 100);
+
+
+  let injectMessage;
+
+  let button = factory('button');
+  let div = factory('div');
+  let span = factory('span');
+  let textarea = factory('textarea');
+  let br = factory('br');
+  let abs = { position: 'absolute' };
+  window.addEventListener('load', () => {
+    let southDock = div(abs, { height: '100px', bottom: 0, width: '100%' });
+    let scroller = div();
+    let scrollHost = div(abs, { bottom: '100px', top: 0, overflowY: 'auto', width: '100%', backgroundColor: '#204080' }, scroller);
+    let main = div(abs, { width: '100%', height: '100%' }, scrollHost, southDock);
+    let textEntry = textarea({ height: '100%', width: '100%', outline: 'none', resize: 'none', margin: 0, padding: '10px', border: 'none' });
+    let textHost = div(abs, { height: '100%', left: 0, right: '100px' }, textEntry);
+    let sendBtn = button(abs, { right: 0, width: '100px', height: '100%', margin: 0 }, "Send");
+    southDock.set(textHost, sendBtn);
+    document.body.append(main);
+    document.body.style.overflow = 'hidden';
+    applyProps(document.body, 'body', [abs, { width: '100%', height: '100%' }]);
+
+    let send = () => {
+      let msg = (textEntry.value + '').trim();
+      textEntry.value = '';
+      if (!msg) return;
+      userMsg = msg;
+      injectMessage(true, userMsg);
+    };
+    sendBtn.addEventListener('click', () => {
+      send();
+    });
+    textEntry.addEventListener('keydown', (e) => {
+      if (e.keyCode === 13) {
+        e.preventDefault();
+        send();
+      }
+    });
+
+    injectMessage = (fromUser, msg) => {
+
+      if (Array.isArray(msg) && msg.length > 0) {
+        msg = [msg[0], msg.slice(1).map(m => [br(), m])];
+      }
+
+      let chatEntry = div({
+        backgroundColor: fromUser ? '#cef' : '#fff',
+        borderRadius: '8px',
+        margin: '12px',
+        marginLeft: fromUser ? '100px' : null,
+        marginRight: fromUser ? null : '100px',
+        borderBottomRightRadius: fromUser ? '0px' : null,
+        borderBottomLeftRadius: fromUser ? null : '0px',
+        padding: '20px',
+      }, msg);
+      scroller.append(chatEntry);
+      scrollHost.scrollTop = scrollHost.scrollHeight;
+    };
+
+    state = 'WANT_TOPIC';
+    processingDelayLimit = 0;
+    textEntry.focus();
+  });
+})();
+
+    </script>
+  </head>
+  <body></body>
+</html>

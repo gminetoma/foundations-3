@@ -1,0 +1,23 @@
+li:last-child {
+  color: orange;
+}
+
+ul li:last-child {
+  color: blue;
+}
+
+article ul li:last-child {
+  color: black;
+}
+
+.food-list li:last-child {
+  color: aquamarine;
+}
+
+article .food-list li:last-child {
+  color: green;
+}
+
+article ul.food-list li:last-child {
+  color: red;
+}

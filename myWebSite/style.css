@@ -1,0 +1,157 @@
+a {
+  text-decoration: none;
+}
+
+.header__nav__top {
+  display: flex;
+
+  width: 100%;
+  height: 50px;
+
+  background-color: grey;
+}
+
+.header__nav__top__left {
+  display: flex;
+  align-items: center;
+
+  margin-left: 10px;
+
+  height: 100%;
+  width: 50%;
+}
+
+.header__nav__top__right {
+  margin-right: 10px;
+
+  height: 100%;
+  width: 50%;
+}
+
+.header__nav__top__right ul {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+
+  list-style: none;
+
+  height: 100%;
+}
+
+.header__nav__top__right ul li a {
+  color: white;
+}
+
+.header__nav__top__right ul li a:hover {
+  color: black;
+}
+
+.header__nav__bottom {
+  width: 100%;
+  height: 50px;
+
+  background-color: rgb(80, 80, 80);
+
+  border-top: 1px black solid;
+  border-bottom: 1px black solid;
+}
+
+.header__nav__bottom ul {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  list-style: none;
+
+  height: 100%;
+}
+
+.header__nav__bottom ul li a {
+  color: white;
+
+  padding: 1em;
+
+  border-left: 1px black solid;
+}
+
+.header__nav__bottom ul li:first-of-type a {
+  border-left: 0;
+}
+
+.header__nav__bottom ul li a:hover {
+  background-color: rgb(90, 90, 90);
+}
+
+.main__title {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+
+  width: 100%;
+  height: 150px;
+
+  background-color: rgb(200, 200, 200);
+}
+
+.main__title h1 {
+  font-size: xx-large;
+}
+
+.main__content {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+
+  width: 100%;
+  height: fit-content;
+
+  background-color: rgb(125, 125, 125);
+
+  padding-top: 30px;
+  padding-bottom: 30px;
+}
+
+.main__content h2 {
+  font-size: x-large;
+}
+
+.main__content .products-display {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+
+  margin-top: 30px;
+}
+
+.main__content .products-display .product {
+  height: 200px;
+  width: 150px;
+
+  background-color: white;
+
+  margin: 10px;
+
+  border-radius: 15px;
+}
+
+.footer__copyright {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  width: 100%;
+
+  background-color: rgb(80, 80, 80);
+
+  padding-top: 20px;
+  padding-bottom: 20px;
+
+  border-top: 1px black solid;
+  border-bottom: 1px black solid;
+}
+
+.footer__copyright span {
+  color: white;
+}

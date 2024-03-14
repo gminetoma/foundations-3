@@ -1,0 +1,28 @@
+p.side-note {
+  color: green;
+}
+
+.post p {
+  background-color: bisque;
+}
+
+.article, .post {
+  font-weight: bold;
+}
+
+a:visited {
+  color: black;
+}
+
+.main .heading h1 {
+  color: red;
+}
+
+#title {
+  /* This one because is the most specific rule */
+  color: blue; 
+}
+
+h1 {
+  color: green;
+}

@@ -1,0 +1,44 @@
+* {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+}
+
+header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding-top: 10px;
+  padding-left: 20px;
+  padding-bottom: 10px;
+
+  background-color: gray;
+  border-bottom: 1px solid black;
+}
+
+main {
+  display: flex;
+  flex-direction: column;
+}
+
+.main__image {
+  width: 100%;
+  height: auto;
+}
+
+.main__image img {
+  width: 100%;
+  height: 100%;
+}
+
+.main__favorite-movies {
+  display: flex;
+  flex-direction: column;
+
+  padding-top: 10px;
+  padding-left: 25px;
+}
